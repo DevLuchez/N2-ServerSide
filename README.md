@@ -1,2 +1,2 @@
 # N2-ServerSide
-Aplicação Web para randomização e ordenação de vetores; Geração e download de gráficos.
+API para randomização e ordenação de vetores; Aplicação Web para geração e download de gráficos.
