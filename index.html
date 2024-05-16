@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Gráficos</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+            margin: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            resize: none;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        input[type="submit"],
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+            width: 100%;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        input[type="submit"]:hover,
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #plotContainer {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gerador de Gráficos</h1>
+        <form action="/gerarGrafico" method="post">
+
+            <label for="vetorX">Vetor X:</label>
+            <textarea name="vetorX" id="vetorX" rows="3" cols="30" placeholder="Insira os valores separados por vírgula"></textarea>
+
+            <label for="vetorY">Vetor Y:</label>
+            <textarea name="vetorY" id="vetorY" rows="3" cols="30" placeholder="Insira os valores separados por vírgula"></textarea>
+
+            <br>
+
+            <input type="radio" name="tipo_grafico" value="scatter"> Gráfico de Dispersão
+            <input type="radio" name="tipo_grafico" value="line"> Gráfico de Linhas
+            <input type="radio" name="tipo_grafico" value="bar"> Gráfico de Barras
+            <input type="radio" name="tipo_grafico" value="bubble"> Gráfico de Bolhas
+            <input type="radio" name="tipo_grafico" value="dot"> Gráfico de Pontos
+
+            <br><br>
+
+            <input type="submit" value="Gerar Gráfico" id="botao_geracao">
+            <br>
+        </form>
+
+        <button id="botao_download">Baixar</button>
+        <div id="plotContainer"></div>
+    </div>
+
+    <script>
+        // Obter dos dados do gráfico a partir do back-end
+        var plotData = {{ plot_json | safe }};
+
+        // Criação do gráfico utilizando Plotly.js
+        Plotly.newPlot('plotContainer', plotData.data)
+
+        // Evento de clique no botão de download do gráfico
+        document.getElementById('botao_download').addEventListener('click', function() {
+            Plotly.toImage('plotContainer', {format: 'png', width: 800, height: 600})// Conversão do gráfico para imagem e download
+                .then(function(url) {
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'plot.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                });
+        });
+    </script>
+</body>
+</html>
